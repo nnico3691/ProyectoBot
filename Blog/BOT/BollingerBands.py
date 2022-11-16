@@ -5,13 +5,11 @@ from ta.volatility import BollingerBands
 import yfinance as yf
 
 # DEFINICION
-# En la biblioteca, este indicador es transformado en 5 características.
-# Porque además de las 3 características resultantes de las 3 bandas ya mencionadas, generamos otros 2
-# indicadores que informarán del momento en que el valor de
-# cierre tiene un valor mayor que la banda superior de Bollinger o menor que la banda inferior de Bollinger. Por tanto, estas dos
-# características normalmente valdrán 0 excepto cuando el valor de cierre sale de estas, que valdrá 1.
-
-# Normalmente conviene vender cuando supera la banda por arriba y comprar cuando es menor que la banda inferior.
+# Indicadores que informarán del momento en que el valor de cierre tiene:
+# 1) un valor mayor que la banda superior de Bollinger
+# 2) Un valor menor que la banda inferior de Bollinger.
+# Resultado: Por tanto, estas dos características normalmente valdrán 0 excepto cuando el valor de cierre sale de estas, que valdrá 1.
+# Conclusion: Normalmente conviene VENDER cuando supera la banda por arriba y COMPRAR cuando es menor que la banda inferior.
 
 # Load datas
 # df = pd.read_csv(f'E:/Proyectos/Python/Proyecto Bot/ta-master/test/data/datas.csv', sep=',')
@@ -41,5 +39,7 @@ dPruebaHI = df[filtroHI]
 dPruebaLI = df[filtroLI]
 print(dPruebaLI)
 print(dPruebaHI)
+
+
 
 
