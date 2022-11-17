@@ -22,10 +22,10 @@ def addBollingerBands(data):
     data['bb_bbh'] = indicator_bb.bollinger_hband()
     data['bb_bbl'] = indicator_bb.bollinger_lband()
 
-    # Add Bollinger Band high indicator
-    data['bb_bbhi'] = indicator_bb.bollinger_hband_indicator()
-
     # Add Bollinger Band low indicator
     data['bb_bbli'] = indicator_bb.bollinger_lband_indicator()
+
+    # Add Bollinger Band high indicator
+    data['bb_bbhi'] = indicator_bb.bollinger_hband_indicator()
 
     return data
