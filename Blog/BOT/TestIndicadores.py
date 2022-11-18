@@ -14,10 +14,20 @@ from datetime import timedelta
 print("======COMIENZO=====")
 
 start = "2022-01-01"
-end = "2022-11-17"
-tickers = ['GOLD.BA', 'TSLA.BA', 'APPL.BA', 'CEPU.BA', 'VALO.BA', 'SUPV.BA', 'PAMP.BA', 'GGAL.BA']
+end = "2022-11-18"
 
-for ticker in tickers:
+ListaTicker = [{"Ticker": 'GOLD', "CarteraTicker": 15000},
+               {"Ticker": 'TSLA.BA', "CarteraTicker": 15000},
+               {"Ticker": 'AAPL.BA', "CarteraTicker": 15000},
+               {"Ticker": 'CEPU.BA', "CarteraTicker": 3000},
+               {"Ticker": 'VALO.BA', "CarteraTicker": 5000},
+               {"Ticker": 'SUPV.BA', "CarteraTicker": 5000},
+               {"Ticker": 'PAMP.BA', "CarteraTicker": 5000},
+               {"Ticker": 'GGAL.BA', "CarteraTicker": 5000}]
+
+for registro in ListaTicker:
+
+    ticker = registro["Ticker"]
 
     print("======== INICIO ANALISIS TIKCER " + ticker + "========")
 
@@ -52,15 +62,15 @@ for ticker in tickers:
     df = data[filtro]
 
     Inversion = [{
-        "Cartera": 1000,
+        "Cartera": 100000,
         "Cantidad": 0,
         "Fecha": '',
         "Precio": 0.0,
-        'Total': 1000,
+        'Total': 100000,
         "TipoOp": 'Inicio'
     }]
 
-    Cartera = 1000
+    Cartera = 100000
     Cantidad = 0
     bb_bbli = 1
     bb_bbhi = 1
@@ -127,6 +137,6 @@ for ticker in tickers:
     for i in Inversion:
         print(i)
 
-    print("======== FIN ANALISIS TIKCER " + ticker + "========")
+    print("======== FIN ANALISIS TICkER " + ticker + "========")
 
 # data.to_csv(r'E:/Proyectos/Python/Proyecto Bot/Archivos/GOLD.csv', index=False)
