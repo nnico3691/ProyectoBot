@@ -1,7 +1,8 @@
 import yfinance as yf
 
 start = "2022-10-01"
-end = "2022-11-17"
+end = "2022-11-01"
 
-data = yf.download('TSLA.BA', period='1d', start=start, end=end)
+# pull data from Yahoo Finance
+data = yf.download('AAPL', interval='5m',  start=start, end=end)
 print(data)

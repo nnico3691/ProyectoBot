@@ -16,20 +16,28 @@ print("======COMIENZO=====")
 start = "2022-01-01"
 end = "2022-11-18"
 
-ListaTicker = [{"Ticker": 'GOLD', "CarteraTicker": 15000},
-               {"Ticker": 'TSLA.BA', "CarteraTicker": 15000},
-               {"Ticker": 'AAPL.BA', "CarteraTicker": 15000},
-               {"Ticker": 'CEPU.BA', "CarteraTicker": 3000},
-               {"Ticker": 'VALO.BA', "CarteraTicker": 5000},
-               {"Ticker": 'SUPV.BA', "CarteraTicker": 5000},
-               {"Ticker": 'PAMP.BA', "CarteraTicker": 5000},
-               {"Ticker": 'GGAL.BA', "CarteraTicker": 5000}]
+ListaTicker = [
+    {"Ticker": 'AAPL.BA', "CarteraTicker": 100000},
+    {"Ticker": 'AMZN.BA', "CarteraTicker": 100000},
+    # {"Ticker": 'BTC-USD', "CarteraTicker": 200000},
+    {"Ticker": 'CEPU.BA', "CarteraTicker": 30000},
+    {"Ticker": 'GGAL.BA', "CarteraTicker": 50000},
+    # {"Ticker": 'GOLD', "CarteraTicker": 15000},
+    {"Ticker": 'KO.BA', "CarteraTicker": 100000},
+    {"Ticker": 'MELI.BA', "CarteraTicker": 15000},
+    {"Ticker": 'MSFT.BA', "CarteraTicker": 50000},
+    {"Ticker": 'PAMP.BA', "CarteraTicker": 30000},
+    {"Ticker": 'SUPV.BA', "CarteraTicker": 15000},
+    {"Ticker": 'TSLA.BA', "CarteraTicker": 100000},
+    {"Ticker": 'VALO.BA', "CarteraTicker": 13000}
+]
 
 for registro in ListaTicker:
 
     ticker = registro["Ticker"]
+    Cartera = registro["CarteraTicker"]
 
-    print("======== INICIO ANALISIS TIKCER " + ticker + "========")
+    print("======== INICIO ANALISIS TICkER " + ticker + "========")
 
     # pull data from Yahoo Finance
     data = yf.download(ticker, period='1d', start=start, end=end)
@@ -37,7 +45,7 @@ for registro in ListaTicker:
     data = bl.addBollingerBands(data)
 
     # data['RSI'] = rs.RSI(data, 7)
-    data['RSI'] = ta.momentum.RSIIndicator(data['Close'], window=9).rsi()
+    data['RSI'] = ta.momentum.RSIIndicator(data['Close'], window=14).rsi()
 
     data['RSI'].plot()
     data['Adj Close'].plot()
@@ -62,30 +70,42 @@ for registro in ListaTicker:
     df = data[filtro]
 
     Inversion = [{
-        "Cartera": 100000,
+        "Cartera": Cartera,
         "Cantidad": 0,
         "Fecha": '',
         "Precio": 0.0,
-        'Total': 100000,
+        'Total': Cartera,
         "TipoOp": 'Inicio'
     }]
 
-    Cartera = 100000
     Cantidad = 0
     bb_bbli = 1
     bb_bbhi = 1
     CompraInicial = 0
     VentaInicial = 0
     fechaAnt = datetime.strptime(start, '%Y-%m-%d')
+    CantidadCompra = 0
+    CantidadCompraAux = 0
 
     for date, row in df.T.items():
+
+        if CantidadCompra == 0:
+            CantidadCompra = int((Cartera / row['Adj Close']) * 0.4)
+            CantidadCompraAux = CantidadCompra
+
+        if CantidadCompra == 0:
+            CantidadCompra = 1
 
         month = str(date.month)
         if len(month) == 1:
             month = '0' + month
 
-        fechaActual = datetime.strptime(str(date.year) + '-' + month + '-' + str(date.day), '%Y-%m-%d')
-        fecha5Dias = datetime.strptime(str(date.year) + '-' + month + '-' + str(date.day), '%Y-%m-%d') - timedelta(
+        day = str(date.day)
+        if len(day) == 1:
+            day = '0' + day
+
+        fechaActual = datetime.strptime(str(date.year) + '-' + month + '-' + day, '%Y-%m-%d')
+        fecha5Dias = datetime.strptime(str(date.year) + '-' + month + '-' + day, '%Y-%m-%d') - timedelta(
             days=5)
 
         if fecha5Dias > fechaAnt:
@@ -94,14 +114,20 @@ for registro in ListaTicker:
             if CompraInicial == 1:
                 bb_bbli = 0
 
-        if (row['bb_bbli'] == 1.0) & (row['RSI'] <= 30) & (Cartera >= row['Adj Close']):
+        if Cartera <= (row['Adj Close'] * CantidadCompra):
+            CantidadCompra = int(CantidadCompra/2)
+
+        if CantidadCompra == 0:
+            CantidadCompra = 1
+
+        if (row['bb_bbli'] == 1.0) & (row['RSI'] <= 30) & (Cartera >= (row['Adj Close'] * CantidadCompra)):
             if bb_bbli == 1:
-                Cartera = Cartera - row['Adj Close']
-                Cantidad = Cantidad + 1
+                Cartera = Cartera - (row['Adj Close'] * CantidadCompra)
+                Cantidad = Cantidad + CantidadCompra
                 Inversion += [{
                     "Cartera": Cartera,
                     "Cantidad": Cantidad,
-                    "Fecha": str(date.year) + '-' + month + '-' + str(date.day),
+                    "Fecha": str(date.year) + '-' + month + '-' + day,
                     "Precio": row['Adj Close'],
                     'Total': Cartera + Cantidad * row['Adj Close'],
                     "TipoOp": 'COMPRA'
@@ -111,23 +137,30 @@ for registro in ListaTicker:
             else:
                 bb_bbli = 1
 
-        if (row['bb_bbhi'] == 1.0) & (row['RSI'] >= 70) & (Cantidad > 0):
-            if bb_bbhi == 1:
-                Multiplicador = 1
-                if Cantidad > 1:
-                    Multiplicador = 2
+        Multiplicador = 4
+        CantidadVenta = 1
+        if Cantidad >= (CantidadCompraAux * Multiplicador):
+            CantidadVenta = CantidadCompraAux * Multiplicador
+        else:
+            CantidadVenta = CantidadCompraAux
 
-                Cartera = Cartera + (row['Adj Close'] * Multiplicador)
-                Cantidad = Cantidad - Multiplicador
+        if Cantidad < CantidadCompraAux:
+            CantidadVenta = Cantidad
+
+        if (row['bb_bbhi'] == 1.0) & (row['RSI'] >= 70) & (Cantidad >= CantidadVenta) & (Cantidad > 0):
+            if bb_bbhi == 1:
+
+                Cartera = Cartera + (row['Adj Close'] * CantidadVenta)
+                Cantidad = Cantidad - CantidadVenta
                 Inversion += [{
                     "Cartera": Cartera,
                     "Cantidad": Cantidad,
-                    "Fecha": str(date.year) + '-' + month + '-' + str(date.day),
+                    "Fecha": str(date.year) + '-' + month + '-' + day,
                     "Precio": row['Adj Close'],
                     'Total': Cartera + Cantidad * row['Adj Close'],
                     "TipoOp": 'VENTA'
                 }]
-
+                CantidadCompra = CantidadCompraAux
                 VentaInicial = 1
             else:
                 bb_bbhi = 1

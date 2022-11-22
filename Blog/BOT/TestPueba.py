@@ -55,14 +55,27 @@ diferencia_en_dias = hoy - ayer
 print(print(diferencia_en_dias.days - 1))
 
 
-ListaTicker = [{"Ticker": 'GOLD.BA', "CarteraTicker": 15000},
-               {"Ticker": 'TSLA.BA', "CarteraTicker": 15000},
-               {"Ticker": 'APPL.BA', "CarteraTicker": 15000},
-               {"Ticker": 'CEPU.BA', "CarteraTicker": 3000},
-               {"Ticker": 'VALO.BA', "CarteraTicker": 5000},
-               {"Ticker": 'SUPV.BA', "CarteraTicker": 5000},
-               {"Ticker": 'PAMP.BA', "CarteraTicker": 5000},
-               {"Ticker": 'GGAL.BA', "CarteraTicker": 5000}]
+ListaTicker = [
+    {"Ticker": 'AAPL.BA', "CarteraTicker": 100000},
+    {"Ticker": 'AMZN.BA', "CarteraTicker": 100000},
+    # {"Ticker": 'BTC-USD', "CarteraTicker": 200000},
+    {"Ticker": 'CEPU.BA', "CarteraTicker": 30000},
+    {"Ticker": 'GGAL.BA', "CarteraTicker": 50000},
+    # {"Ticker": 'GOLD', "CarteraTicker": 15000},
+    {"Ticker": 'KO.BA', "CarteraTicker": 100000},
+    {"Ticker": 'MELI.BA', "CarteraTicker": 15000},
+    {"Ticker": 'MSFT.BA', "CarteraTicker": 50000},
+    {"Ticker": 'PAMP.BA', "CarteraTicker": 30000},
+    {"Ticker": 'SUPV.BA', "CarteraTicker": 15000},
+    {"Ticker": 'TSLA.BA', "CarteraTicker": 100000},
+    {"Ticker": 'VALO.BA', "CarteraTicker": 13000}
+]
 
-for registro in ListaTicker:
-    print(registro["Ticker"])
+print(ListaTicker.pop()["Ticker"])
+
+# for registro in ListaTicker:
+#    print(registro["Ticker"])
+
+
+
+Cartera = 30000
